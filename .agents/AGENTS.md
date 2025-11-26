@@ -145,6 +145,28 @@ docker compose run --rm django python manage.py createsuperuser
 Create demo project with synthetic data:
 ```bash
 docker compose run --rm django python manage.py create_demo_project
+
+# Create from export file
+docker compose run --rm django python manage.py create_demo_project --from-export demo_export.json
+
+# Create and export for reuse
+docker compose run --rm django python manage.py create_demo_project --export demo_export.json
+```
+
+Export a project to JSON:
+```bash
+docker compose run --rm django python manage.py export_project "Project Name"
+
+# Export to specific file
+docker compose run --rm django python manage.py export_project "Project Name" -o backup.json
+```
+
+Import a project from JSON:
+```bash
+docker compose run --rm django python manage.py import_project export.json --user admin@example.com
+
+# Import with custom name
+docker compose run --rm django python manage.py import_project export.json --user admin@example.com --project-name "New Project"
 ```
 
 Generate OpenAPI schema:
