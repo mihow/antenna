@@ -221,6 +221,58 @@ The export is a JSON file with this structure:
 }
 ```
 
+## Testing
+
+### Running Automated Tests
+
+Comprehensive automated tests are available in `ami/main/tests_export_import.py`:
+
+```bash
+# Run all export/import tests
+docker compose run --rm django python manage.py test ami.main.tests_export_import
+
+# Run specific test class
+docker compose run --rm django python manage.py test ami.main.tests_export_import.ExportProjectCommandTest
+
+# Run with verbose output
+docker compose run --rm django python manage.py test ami.main.tests_export_import -v 2
+```
+
+### Manual Testing Script
+
+A comprehensive test script is available at `test_export_import.sh`:
+
+```bash
+# Run the complete test suite (creates demo, exports, imports, verifies)
+docker compose run --rm django bash test_export_import.sh
+```
+
+This script:
+1. Runs automated tests
+2. Creates a demo project
+3. Exports the project to JSON
+4. Verifies the export file
+5. Imports the project
+6. Verifies the import matches the original
+7. Tests create_demo_project with export/import options
+
+### Test Coverage
+
+The automated tests cover:
+- ✅ Basic export functionality
+- ✅ Export of all data types (sites, devices, images, taxa, etc.)
+- ✅ Export relationship preservation
+- ✅ Basic import functionality
+- ✅ Import with custom project name
+- ✅ Duplicate name handling
+- ✅ Relationship preservation after import
+- ✅ Skip images option
+- ✅ Skip ML data option
+- ✅ Error handling (nonexistent files, users, projects)
+- ✅ Full export/import cycle integrity
+- ✅ Taxonomic hierarchy preservation
+- ✅ create_demo_project enhancements
+
 ## Troubleshooting
 
 ### Import Fails with Missing User
