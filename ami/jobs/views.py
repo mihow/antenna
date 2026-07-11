@@ -241,7 +241,7 @@ class JobViewSet(DefaultViewSet, ProjectMixin):
                 for _ in range(batch):
                     task = await manager.reserve_task(job.pk, timeout=0.1)
                     if task:
-                        tasks.append(task.dict())
+                        tasks.append(task.model_dump())
             return tasks
 
         # Use async_to_sync to properly handle the async call
@@ -284,7 +284,7 @@ class JobViewSet(DefaultViewSet, ProjectMixin):
                 # Queue the background task
                 # Convert Pydantic model to dict for JSON serialization
                 task = process_nats_pipeline_result.delay(
-                    job_id=job.pk, result_data=result_data.dict(), reply_subject=reply_subject
+                    job_id=job.pk, result_data=result_data.model_dump(mode="json"), reply_subject=reply_subject
                 )
 
                 queued_tasks.append(

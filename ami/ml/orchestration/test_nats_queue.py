@@ -69,7 +69,7 @@ class TestTaskQueueManager(unittest.IsolatedAsyncioTestCase):
 
         # Mock message with task data
         mock_msg = MagicMock()
-        mock_msg.data = sample_task.json().encode()
+        mock_msg.data = sample_task.model_dump_json().encode()
         mock_msg.reply = "reply.subject.123"
         mock_msg.metadata = MagicMock(sequence=MagicMock(stream=1))
 

@@ -218,7 +218,7 @@ class ProcessingService(BaseModel):
         info_url = urljoin(self.endpoint_url, "info")
         resp = requests.get(info_url, timeout=timeout)
         resp.raise_for_status()
-        info_data = ProcessingServiceInfoResponse.parse_obj(resp.json())
+        info_data = ProcessingServiceInfoResponse.model_validate(resp.json())
         return info_data.pipelines
 
 

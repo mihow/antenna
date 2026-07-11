@@ -245,7 +245,7 @@ def process_images(
     task_logger.debug(f"Pipeline request data: {request_data}")
 
     session = create_session()
-    resp = session.post(endpoint_url, json=request_data.dict())
+    resp = session.post(endpoint_url, json=request_data.model_dump(mode="json"))
     if not resp.ok:
         summary = request_data.summary()
         error_msg = extract_error_message_from_response(resp)
@@ -406,7 +406,7 @@ def get_or_create_detection(
 
     :return: A tuple of the Detection object and a boolean indicating whether it was created
     """
-    serialized_bbox = list(detection_resp.bbox.dict().values())
+    serialized_bbox = list(detection_resp.bbox.model_dump().values())
     detection_repr = f"Detection {detection_resp.source_image_id} {serialized_bbox}"
 
     assert str(detection_resp.source_image_id) == str(
@@ -825,7 +825,7 @@ def save_results(
     job = None
 
     if results_json:
-        results = PipelineResultsResponse.parse_raw(results_json)
+        results = PipelineResultsResponse.model_validate_json(results_json)
     assert results, "No results data passed to save_results task"
 
     pipeline, _created = Pipeline.objects.get_or_create(slug=results.pipeline, defaults={"name": results.pipeline})
@@ -842,11 +842,11 @@ def save_results(
         job_logger = job.logger
 
     if results_json:
-        results = PipelineResultsResponse.parse_raw(results_json)
+        results = PipelineResultsResponse.model_validate_json(results_json)
     assert results, "No results data passed to save_results task"
     job_logger.info(f"Saving results from pipeline {results.pipeline}")
 
-    results = PipelineResultsResponse.parse_obj(results.dict())
+    results = PipelineResultsResponse.model_validate(results.model_dump())
     assert results, "No results from pipeline to save"
     source_images = SourceImage.objects.filter(pk__in=[int(img.id) for img in results.source_images]).distinct()
 
@@ -1122,7 +1122,7 @@ class Pipeline(BaseModel):
 
     def save_results_async(self, results: PipelineResultsResponse, job_id: int | None = None):
         # Returns an AsyncResult
-        results_json = results.json()
+        results_json = results.model_dump_json()
         return save_results.delay(results_json=results_json, job_id=job_id)
 
     def save(self, *args, **kwargs):

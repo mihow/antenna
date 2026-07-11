@@ -92,8 +92,7 @@ class JobProgressSummary(pydantic.BaseModel):
     def status_label(self) -> str:
         return get_status_label(self.status, self.progress)
 
-    class Config:
-        use_enum_values = True
+    model_config = pydantic.ConfigDict(use_enum_values=True)
 
 
 class JobProgressStageDetail(ConfigurableStage, JobProgressSummary):
@@ -102,7 +101,7 @@ class JobProgressStageDetail(ConfigurableStage, JobProgressSummary):
     pass
 
 
-stage_parameters = JobProgressStageDetail.__fields__.keys()
+stage_parameters = JobProgressStageDetail.model_fields.keys()
 
 
 class JobProgress(pydantic.BaseModel):
@@ -197,9 +196,7 @@ class JobProgress(pydantic.BaseModel):
             stage.progress = 0
             stage.status = status
 
-    class Config:
-        use_enum_values = True
-        as_dict = True
+    model_config = pydantic.ConfigDict(use_enum_values=True)
 
 
 def default_job_progress() -> JobProgress:

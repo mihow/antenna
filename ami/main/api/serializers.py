@@ -339,7 +339,7 @@ class ProjectSerializer(DefaultSerializer):
 
     def get_feature_flags(self, obj):
         if obj.feature_flags:
-            return obj.feature_flags.dict()
+            return obj.feature_flags.model_dump()
         return {}
 
     def get_is_member(self, obj):

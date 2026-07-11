@@ -15,6 +15,10 @@ class ConfigurableStageParam(pydantic.BaseModel):
 class ConfigurableStage(pydantic.BaseModel):
     """A configurable stage of a pipeline or job."""
 
+    # Allow validating instances across subclasses, e.g. the default
+    # ConfigurableStage instances used for the PipelineStage subclass.
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     key: str
     name: str
     params: list[ConfigurableStageParam] = []

@@ -135,7 +135,7 @@ class PipelineViewSet(DefaultViewSet, ProjectMixin):
             job_id=None,
             reprocess_all_images=project.feature_flags.reprocess_all_images,
         )
-        return Response(results.dict())
+        return Response(results.model_dump())
 
 
 class ProcessingServiceViewSet(DefaultViewSet, ProjectMixin):
@@ -170,7 +170,7 @@ class ProcessingServiceViewSet(DefaultViewSet, ProjectMixin):
         assert instance is not None
         status_response = instance.get_status()
         return Response(
-            {"instance": serializer.data, "status": status_response.dict()}, status=status.HTTP_201_CREATED
+            {"instance": serializer.data, "status": status_response.model_dump()}, status=status.HTTP_201_CREATED
         )
 
     @action(detail=True, methods=["get"])
@@ -180,11 +180,11 @@ class ProcessingServiceViewSet(DefaultViewSet, ProjectMixin):
         """
         processing_service = ProcessingService.objects.get(pk=pk)
         response = processing_service.get_status()
-        return Response(response.dict())
+        return Response(response.model_dump())
 
     @action(detail=True, methods=["post"])
     def register_pipelines(self, request: Request, pk=None) -> Response:
         processing_service = ProcessingService.objects.get(pk=pk)
         response = processing_service.create_pipelines()
         processing_service.save()
-        return Response(response.dict())
+        return Response(response.model_dump())

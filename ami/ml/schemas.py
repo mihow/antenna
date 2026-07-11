@@ -3,6 +3,7 @@ import logging
 import typing
 
 import pydantic
+import pydantic_core
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -62,7 +63,7 @@ class AlgorithmReference(pydantic.BaseModel):
 
 class AlgorithmCategoryMapResponse(pydantic.BaseModel):
     data: list[dict] = pydantic.Field(
-        default_factory=dict,
+        default_factory=list,
         description="Complete data for each label, such as id, gbif_key, explicit index, source, etc.",
         examples=[
             [
@@ -117,8 +118,7 @@ class AlgorithmConfigResponse(pydantic.BaseModel):
     )
     category_map: AlgorithmCategoryMapResponse | None = None
 
-    class Config:
-        extra = "ignore"
+    model_config = pydantic.ConfigDict(extra="ignore")
 
 
 class ClassificationResponse(pydantic.BaseModel):
@@ -150,8 +150,7 @@ class SourceImageResponse(pydantic.BaseModel):
     id: str
     url: str
 
-    class Config:
-        extra = "ignore"
+    model_config = pydantic.ConfigDict(extra="ignore")
 
 
 KnownPipelineChoices = typing.Literal[
@@ -194,7 +193,13 @@ class PipelineRequestConfigParameters(dict):
     removed before sending the request to the Processing Service.
     """
 
-    pass
+    @classmethod
+    def __get_pydantic_core_schema__(cls, source_type, handler):
+        # Pydantic 2 cannot generate a schema for arbitrary dict subclasses,
+        # so validate as a plain dict and re-wrap the result in this class.
+        return pydantic_core.core_schema.no_info_after_validator_function(
+            cls, handler.generate_schema(dict[str, typing.Any])
+        )
 
 
 class PipelineRequest(pydantic.BaseModel):
@@ -233,7 +238,7 @@ class PipelineResultsResponse(pydantic.BaseModel):
             "metadata, keyed by the algorithm key. "
             "DEPRECATED: Algorithms should only be provided in the ProcessingServiceInfoResponse."
         ),
-        depreciated=True,
+        deprecated=True,
     )
     total_time: float
     source_images: list[SourceImageResponse]

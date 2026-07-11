@@ -144,7 +144,7 @@ class TaskQueueManager:
 
             subject = self._get_subject(job_id)
             # Convert Pydantic model to JSON
-            task_data = json.dumps(data.dict())
+            task_data = json.dumps(data.model_dump(mode="json"))
 
             # Publish to JetStream
             ack = await self.js.publish(subject, task_data.encode())
