@@ -393,7 +393,7 @@ class TestImageThumbnailViews(TestCase):
         Image.new("RGBA", (320, 240), (255, 0, 0, 128)).save(rgba_buf, format="PNG")
         rgba_bytes = rgba_buf.getvalue()
 
-        with mock.patch("ami.main.models.fetch_image_content", return_value=rgba_bytes):
+        with mock.patch("ami.main.models.source_images.fetch_image_content", return_value=rgba_bytes):
             response = self.client.get(f"/api/v2/captures/thumbnails/{self.first_capture.pk}/")
 
         self.assertEqual(response.status_code, 302)

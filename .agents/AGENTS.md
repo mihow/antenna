@@ -521,7 +521,7 @@ npm run build                    # Production build
 
 ## Important File Locations
 
-- `ami/main/models.py` (~3700 lines) - Core domain models
+- `ami/main/models/` - Core domain models, split into logical submodules (projects, deployments, events, source_images, detections, classifications, identifications, occurrences, taxonomy, collections, pages, common)
 - `ami/main/models_future/filters.py` - Core filtering utilities (build_occurrence_default_filters_q)
 - `ami/ml/models/pipeline.py` - ML pipeline orchestration
 - `ami/ml/orchestration/processing.py` - Image processing workflow
@@ -549,7 +549,7 @@ npm run build                    # Production build
 
 ## Known Technical Debt & Areas for Improvement
 
-1. **Model File Size** - `ami/main/models.py` is very large (~3700 lines) containing model definitions, business logic, processing orchestration, and helper functions. Consider splitting into separate modules.
+1. **Model Business Logic** - the models package (`ami/main/models/`) still mixes model definitions with business logic and processing orchestration inside the larger submodules. Consider extracting service modules over time.
 
 2. **Processing Logic Extraction** - Functions like `process_single_source_image()` and `group_images_into_events()` should be moved from models to dedicated service modules (e.g., `ami/ml/orchestration/`, `ami/main/services/`).
 
