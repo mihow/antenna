@@ -8,7 +8,7 @@ over a taxon node and all its `parents_json` descendants" problem.
 Canonical reference for PR #1317 (verification status on taxa views, issue
 #1316) and follow-up #1319 (model-agreement stats — deferred).
 
-Reference implementations in `ami/main/models.py`:
+Reference implementations in `ami/main/models/taxonomy.py`:
 
 - `TaxonQuerySet.with_observation_counts_subqueries` (default path, correlated `Subquery`)
 - `TaxonQuerySet.with_observation_counts_aggregated` (collection path, conditional aggregation)
