@@ -145,12 +145,15 @@ class SourceImageRequest(pydantic.BaseModel):
     url: str
     # b64: str | None = None
 
+    # Image IDs are integer primary keys in Antenna but strings in the API contract
+    model_config = pydantic.ConfigDict(coerce_numbers_to_str=True)
+
 
 class SourceImageResponse(pydantic.BaseModel):
     id: str
     url: str
 
-    model_config = pydantic.ConfigDict(extra="ignore")
+    model_config = pydantic.ConfigDict(extra="ignore", coerce_numbers_to_str=True)
 
 
 KnownPipelineChoices = typing.Literal[
@@ -168,6 +171,9 @@ class DetectionRequest(pydantic.BaseModel):
 
 
 class DetectionResponse(pydantic.BaseModel):
+    # Image IDs are integer primary keys in Antenna but strings in the API contract
+    model_config = pydantic.ConfigDict(coerce_numbers_to_str=True)
+
     source_image_id: str
     bbox: BoundingBox
     inference_time: float | None = None
@@ -249,6 +255,8 @@ class PipelineResultsResponse(pydantic.BaseModel):
 class PipelineResultsError(pydantic.BaseModel):
     """Error result when pipeline processing fails for an image."""
 
+    model_config = pydantic.ConfigDict(coerce_numbers_to_str=True)
+
     error: str
     image_id: str | None = None
 
@@ -257,6 +265,8 @@ class PipelineProcessingTask(pydantic.BaseModel):
     """
     A task representing a single image or detection to be processed in an async pipeline.
     """
+
+    model_config = pydantic.ConfigDict(coerce_numbers_to_str=True)
 
     id: str
     image_id: str
